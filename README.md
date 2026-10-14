@@ -4,7 +4,7 @@
 
 | 工具 | 页面 | 数据源 |
 | --- | --- | --- |
-| OpenCode Go 用量 | `index.html` | [opencode.ai/docs/go](https://opencode.ai/docs/zh-cn/go/#usage-limits) |
+| OpenCode Go 用量 | `index.html` | [opencode.ai/v2/docs/console/go](https://opencode.ai/v2/docs/console/go/#usage-limits) |
 | OpenCode Go Plus 用量 | `go-plus-limits.html` | 同上（取文档中第二套表） |
 | Command Code GOAT 用量 | `goat-limits.html` | [commandcode.ai/docs/plans/goat](https://commandcode.ai/docs/plans/goat) |
 
@@ -55,7 +55,7 @@
 
 ## OpenCode Go（index.html）
 
-抓取 [OpenCode Go 官方文档](https://opencode.ai/docs/zh-cn/go/#usage-limits) 的"价格 + 每月额度"表，估算每模型每月请求数。数据源为 GitHub 仓库 `anomalyco/opencode` 的 `dev` 分支原始 mdx（jsdelivr CDN 兜底）。
+抓取 [OpenCode Go 官方文档](https://opencode.ai/v2/docs/console/go/#usage-limits) 的"价格 + 每月额度"表，估算每模型每月请求数。数据源为 GitHub 仓库 `anomalyco/opencode` 的 `dev` 分支原始 mdx（jsdelivr CDN 兜底）。
 
 ## OpenCode Go Plus（go-plus-limits.html）
 

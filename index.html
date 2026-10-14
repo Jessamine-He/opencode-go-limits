@@ -334,7 +334,7 @@ const DICT = {
     'tip.p.line2': '缓存读 {c} · 缓存写 {w}',
     'flag.dev': '计算值与官方值差异较大',
     'gh.star': '去 GitHub 点亮 Star',
-    'footer.line1': '数据源：<a href="https://opencode.ai/docs/zh-cn/go/#usage-limits" target="_blank" rel="noopener">opencode.ai 官方文档</a>（GitHub <code>anomalyco/opencode</code> 同步）。',
+    'footer.line1': '数据源：<a href="https://opencode.ai/v2/docs/console/go/#usage-limits" target="_blank" rel="noopener">opencode.ai 官方文档</a>（GitHub <code>anomalyco/opencode</code> 同步）。',
     'footer.line2': '打开页面即自动抓取最新数据；抓取失败时回退到本地缓存。',
   },
   en: {
@@ -370,7 +370,7 @@ const DICT = {
     'tip.p.line2': 'Cache read {c} · Cache write {w}',
     'flag.dev': 'Large deviation from the official estimate',
     'gh.star': 'Star on GitHub',
-    'footer.line1': 'Source: <a href="https://opencode.ai/docs/zh-cn/go/#usage-limits" target="_blank" rel="noopener">opencode.ai official docs</a> (mirrored from GitHub <code>anomalyco/opencode</code>).',
+    'footer.line1': 'Source: <a href="https://opencode.ai/v2/docs/console/go/#usage-limits" target="_blank" rel="noopener">opencode.ai official docs</a> (mirrored from GitHub <code>anomalyco/opencode</code>).',
     'footer.line2': 'Data is fetched automatically on load; falls back to the last successful cache if fetching fails.',
   },
 };
@@ -389,9 +389,11 @@ const langLocale = () => (LANG === 'zh' ? 'zh-CN' : 'en-US');
 const fmtDate = (iso) => new Date(iso).toLocaleString(langLocale(), { hour12: false });
 
 // ========== 常量与工具 ==========
+// 官方文档已迁到 services/www/src/docs/content/console/go.mdx（原 packages/web/.../zh-cn/go.mdx 已 404），
+// 且文档站点改为英文单语（线上 https://opencode.ai/v2/docs/console/go/），故表头与解析均按英文。
 const SOURCES = [
-  'https://raw.githubusercontent.com/anomalyco/opencode/dev/packages/web/src/content/docs/zh-cn/go.mdx',
-  'https://cdn.jsdelivr.net/gh/anomalyco/opencode@dev/packages/web/src/content/docs/zh-cn/go.mdx',
+  'https://raw.githubusercontent.com/anomalyco/opencode/dev/services/www/src/docs/content/console/go.mdx',
+  'https://cdn.jsdelivr.net/gh/anomalyco/opencode@dev/services/www/src/docs/content/console/go.mdx',
 ];
 const CACHE_KEY = 'opencode-go-limits-v1';
 const $ = (sel) => document.querySelector(sel);
@@ -658,10 +660,9 @@ function parseTableByHeader(src, headers, occurrence = 0) {
 
 // 解析每次请求的 token 数量列表，返回 [{ expr, in, cache, out }]
 function parsePatterns(src) {
-  // 全文扫描，不再依赖段落锚点。行格式：
-  //   - <模型表达式> — N 个输入 token，N 个缓存 token，N 个输出 token
-  // 官方曾写作"每次请求 N 个输入 token"，故只匹配"个输入 token"之后的半段。
-  const re = /^- (.+?) — ([0-9,]+) 个输入 token，([0-9,]+) 个缓存 token，([0-9,]+) 个输出 token$/gm;
+  // 全文扫描，不依赖段落锚点。行格式（2026-10 官方改为英文单语）：
+  //   - <模型表达式> — N input, N cached, N output tokens per request
+  const re = /^- (.+?) — ([0-9,]+) input, ([0-9,]+) cached, ([0-9,]+) output tokens per request$/gm;
   const out = [];
   let m;
   while ((m = re.exec(src))) {
@@ -715,9 +716,9 @@ function parse(mdx) {
   // 价格+每月额度表、官方每月请求数对照表：均按表头列名定位（见 parseTableByHeader）
   // 本页为 Go 套餐，取文档里第一套表（Go / Go Plus 两套表表头相同，靠序号区分）
   const PLAN = 0;
-  const prices = parseTableByHeader(mdx, ['模型', '输入', '输出', '缓存读取', '缓存写入', '每月限制'], PLAN);
+  const prices = parseTableByHeader(mdx, ['Model', 'Input', 'Output', 'Cached Read', 'Cached Write', 'Monthly limit'], PLAN);
   const patterns = parsePatterns(mdx);
-  const official = parseTableByHeader(mdx, ['模型', '每 5 小时请求数', '每周请求数', '每月请求数'], PLAN);
+  const official = parseTableByHeader(mdx, ['Model', 'Requests per 5 hours', 'Requests per week', 'Requests per month'], PLAN);
 
   // 请求模式匹配表：归一化模型名 → token 构成
   const patMap = new Map();
